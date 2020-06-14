@@ -56,7 +56,7 @@ void JEDEC::Serialize()
 	for (uint32_t Index = FuseChecksum.second.first; Index < FuseChecksum.second.second; Index++)
 		FuseChecksum.first += m_FileBuffer.at(Index);
 
-	//	Write checksum to file buffer.
+	//	Write fuselist checksum to file buffer.
 
 	Buffer << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << FuseChecksum.first;
 	m_FileBuffer.append(string("\n*C") + Buffer.str());
