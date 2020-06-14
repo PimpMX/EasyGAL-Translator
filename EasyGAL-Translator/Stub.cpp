@@ -15,6 +15,7 @@ int main()
 	states.resize(511);
 	states.insert(states.begin(), true);
 	states.insert(states.begin() + 52, true);
+	states.insert(states.begin() + 333, true);
 	states.resize(511);
 
 	for(uint32_t Index = 0; Index < states.size(); Index++)

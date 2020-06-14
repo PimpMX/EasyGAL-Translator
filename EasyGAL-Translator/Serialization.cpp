@@ -36,7 +36,7 @@ void JEDEC::Serialize()
 			Index += FUSE_BLOCKSIZE - 1;
 			continue;
 		}
-		if (Index % FUSE_BLOCKSIZE == false)
+		else if (Index % FUSE_BLOCKSIZE == false)
 		{
 			if (Index) 
 				m_FileBuffer.append("\n");
