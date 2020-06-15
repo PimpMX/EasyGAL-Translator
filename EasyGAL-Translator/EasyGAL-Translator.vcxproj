@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DNF.cpp" />
+    <ClCompile Include="Fuses.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="Stub.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DNF.hpp" />
+    <ClInclude Include="Fuses.h" />
     <ClInclude Include="Helper.hpp" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="Stub.hpp" />
