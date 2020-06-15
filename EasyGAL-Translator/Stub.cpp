@@ -7,14 +7,6 @@
 
 using namespace std;
 
-#include "Serialization.h"
-
 int main() 
 {
-	std::vector<bool> states;
-	states.resize(511);
-	states.insert(states.begin(), true);
-	states.insert(states.begin() + 52, true);
-	states.insert(states.begin() + 333, true);
-	states.resize(511);
 }
