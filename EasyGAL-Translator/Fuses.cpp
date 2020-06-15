@@ -1,11 +1,11 @@
 #include "Fuses.h"
 
-bool Fuses::Build(vector<DNF::Expression> Expressions)
+bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut)
 {
 	return false;
 }
 
-bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, uint32_t iRowLength)
+bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, uint32_t iRowLength, vector<bool>& FuseListOut)
 {
 	return false;
 }
