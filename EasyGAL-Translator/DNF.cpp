@@ -45,6 +45,12 @@ bool DNF::Build(TableData& TruthTable, Expression& ExpressionOut)
 
 bool DNF::Build(vector<TableData>& TruthTables, vector<Expression>& ExpressionsOut)
 {
+	if(!TruthTables.size())
+	{
+		ERROR("%s", "No truth tables were supplied");
+		return false;
+	}
+
 	vector<Expression> Expressions;
 
 	for(TableData TruthTable : TruthTables)

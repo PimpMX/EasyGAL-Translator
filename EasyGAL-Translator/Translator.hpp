@@ -7,9 +7,11 @@
 
 #include <vector>
 
-#include "DNF.hpp"
-#include "Helper.hpp"
 #include "TableData.hpp"
+#include "Serialization.h"
+#include "Helper.hpp"
+#include "Fuses.h"
+#include "DNF.hpp"
 
 using namespace std;
 
