@@ -13,7 +13,7 @@
 
 //	Maximum allowed inputs for expressions.
 
-constexpr uint32_t MAX_INPUTS = 12;
+constexpr uint32_t MAX_INPUTS = 24;
 
 namespace DNF 
 {

@@ -14,14 +14,14 @@ enum class MacrocellMode
 	MODE_COMBINATORIAL_HIGH
 };
 
-/*
-*	The fuses namespace is used to generate fuse lists from DNF::Expression objects.
-* 
-*/
+//	The fuses namespace is used to generate fuse lists from DNF::Expression objects.
 
 namespace Fuses
 {
 	bool Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut);
 	bool BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, uint32_t iRowLength, vector<bool>& FuseListOut);
+	
 	int PinToIndex(uint32_t iPinNumber, bool bInverted, MacrocellMode Mode = MacrocellMode::MODE_NONE);
+	int MaxOutputPinTerms(uint32_t iPinNumber);
+	bool IsValidOutputPin(uint32_t iPinNumber);
 }
