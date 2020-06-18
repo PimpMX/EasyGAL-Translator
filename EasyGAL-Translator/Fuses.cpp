@@ -1,7 +1,64 @@
 #include "Fuses.h"
 
+void DumpVector(vector<bool> Fuses, uint32_t BlockSize)
+{
+	for(uint32_t Index = 0; Index < Fuses.size(); Index++)
+	{
+		if (Index % BlockSize == false)
+			printf("%s", "\n");
+
+		bool bTemporary = Fuses[Index];
+		printf("%i", bTemporary);
+	}
+}
+
 bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut)
 {
+	if (!Expressions.size())
+	{
+		ERROR("%s", "No expressions were given");
+		return false;			
+	}
+
+	if (FuseListOut.size())
+		FuseListOut.clear();
+
+	//	Set AR Fuses to zero (we don't need them as of yet)
+
+	FuseListOut.resize(5892);
+	std:fill(FuseListOut.begin(), FuseListOut.begin() + 44, 1);
+
+	//	Start writing expressions to FuseList.
+
+	for(uint32_t Index = 0; Index < Expressions.size(); Index++)
+	{
+		uint32_t ExpIndexStart, ExpIndexEnd;
+
+		ExpIndexStart = [Expressions, Index]() -> uint32_t
+		{
+			uint32_t FuseIndex = 44;
+
+			for (uint32_t OLMC = 23; OLMC > Expressions[Index].m_OutputPin; OLMC--)
+				FuseIndex += (Fuses::MaxOutputPinTerms(OLMC) + 1) * 44;
+
+			return FuseIndex;
+		}();
+
+		ExpIndexEnd = ExpIndexStart + Fuses::MaxOutputPinTerms(Expressions[Index].m_OutputPin) * 44;
+
+		vector<bool> ExpressionBuffer;
+
+		if (!Fuses::BuildFromExpression(Expressions[Index], Fuses::MaxOutputPinTerms(Expressions[Index].m_OutputPin), 44, ExpressionBuffer)) 
+		{
+			ERROR("%s", "Couldn't build all expression fuses");
+			return false;
+		}
+
+		std::copy(ExpressionBuffer.begin(), ExpressionBuffer.end(), FuseListOut.begin() + ExpIndexStart);
+	}
+
+	DumpVector(FuseListOut, 32);
+
 	return true;
 }
 
@@ -21,6 +78,12 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 	if (!Expression.m_Rows.size() || !iNumRows || !iRowLength)
 	{
 		ERROR("%s", "Invalid parameters");
+		return false;
+	}
+
+	if (Expression.m_Rows.size() > Fuses::MaxOutputPinTerms(Expression.m_OutputPin))
+	{
+		ERROR("%s", "Too many terms for given output pin");
 		return false;
 	}
 

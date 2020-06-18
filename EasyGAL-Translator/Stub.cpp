@@ -13,8 +13,8 @@ int main()
 {
 	TableData Data;
 
-	Data.m_InputPins = { 2, 2 };
-	Data.m_OutputPin = 22;
+	Data.m_InputPins = { 2, 4 };
+	Data.m_OutputPin = 23;
 	Data.m_EnableFlipFlop = false;
 	Data.m_Table = { 0, 1, 1, 1 };
 
@@ -22,15 +22,5 @@ int main()
 	LOG("%i", DNF::Build(Data, Expression));
 
 	vector<bool> Fuselist;
-
-	Fuses::BuildFromExpression(Expression, 8, 44, Fuselist);
-
-	for(uint32_t Index = 0; Index < Fuselist.size(); Index++)
-	{
-		if (Index % 44 == 0)
-			printf("%s", "\n");
-
-		bool b = Fuselist[Index];
-		printf("%i", b);
-	}
+	Fuses::Build(vector<DNF::Expression> {Expression}, Fuselist);
 }
