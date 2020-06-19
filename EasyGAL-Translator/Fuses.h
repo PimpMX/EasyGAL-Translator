@@ -21,7 +21,12 @@ namespace Fuses
 	bool Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut);
 	bool BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, uint32_t iRowLength, vector<bool>& FuseListOut);
 
-	int MaxOutputPinTerms(uint32_t iPinNumber);
-	bool IsValidOutputPin(uint32_t iPinNumber);
 	int PinToIndex(uint32_t iPinNumber, bool bInverted, MacrocellMode Mode = MacrocellMode::MODE_NONE);
+
+	namespace Output
+	{
+		int MaximumTerms(uint32_t iPinNumber);
+		bool IsValid(uint32_t iPinNumber);
+		bool ModeFuseIndices(uint32_t iPinNumber, pair<uint32_t, uint32_t>& FusesOut);
+	}
 }

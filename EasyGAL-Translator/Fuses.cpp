@@ -23,39 +23,44 @@ bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut
 	if (FuseListOut.size())
 		FuseListOut.clear();
 
-	//	Set AR Fuses to zero (we don't need them as of yet)
+	//	Adjust fuselist size to the fuse list size of the integrated circuit.
 
 	FuseListOut.resize(5892);
-	std:fill(FuseListOut.begin(), FuseListOut.begin() + 44, 1);
+	
+	//	Set AR Fuses to zero (we don't need them as of yet)
 
+	std:fill(FuseListOut.begin(), FuseListOut.begin() + 44, false);
+	
 	//	Start writing expressions to FuseList.
 
 	for(uint32_t Index = 0; Index < Expressions.size(); Index++)
 	{
-		uint32_t ExpIndexStart, ExpIndexEnd;
-
-		ExpIndexStart = [Expressions, Index]() -> uint32_t
+		uint32_t ExpIndexStart = [Expressions, Index]() -> uint32_t
 		{
 			uint32_t FuseIndex = 44;
 
 			for (uint32_t OLMC = 23; OLMC > Expressions[Index].m_OutputPin; OLMC--)
-				FuseIndex += (Fuses::MaxOutputPinTerms(OLMC) + 1) * 44;
+				FuseIndex += (Fuses::Output::MaximumTerms(OLMC) + 1) * 44;
 
 			return FuseIndex;
 		}();
 
-		ExpIndexEnd = ExpIndexStart + Fuses::MaxOutputPinTerms(Expressions[Index].m_OutputPin) * 44;
-
 		vector<bool> ExpressionBuffer;
 
-		if (!Fuses::BuildFromExpression(Expressions[Index], Fuses::MaxOutputPinTerms(Expressions[Index].m_OutputPin), 44, ExpressionBuffer)) 
+		if (!Fuses::BuildFromExpression(Expressions[Index], Fuses::Output::MaximumTerms(Expressions[Index].m_OutputPin), 44, ExpressionBuffer)) 
 		{
 			ERROR("%s", "Couldn't build all expression fuses");
 			return false;
 		}
 
+		//	Copy ExpressionBuffer into the correct target destination in the fusematrix.
+
 		std::copy(ExpressionBuffer.begin(), ExpressionBuffer.end(), FuseListOut.begin() + ExpIndexStart);
 	}
+
+	//	Set SP fuses to zero because we also don't need them as of yet.
+
+	std::fill(FuseListOut.begin() + 5764, FuseListOut.begin() + 5764 + 44, false);
 
 	DumpVector(FuseListOut, 32);
 
@@ -69,7 +74,7 @@ bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut
 
 bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, uint32_t iRowLength, vector<bool>& FuseList)
 {
-	if(!Fuses::IsValidOutputPin(Expression.m_OutputPin))
+	if(!Fuses::Output::IsValid(Expression.m_OutputPin))
 	{
 		ERROR("%s", "Expression has invalid output pin");
 		return false;
@@ -81,7 +86,7 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 		return false;
 	}
 
-	if (Expression.m_Rows.size() > Fuses::MaxOutputPinTerms(Expression.m_OutputPin))
+	if (Expression.m_Rows.size() > Fuses::Output::MaximumTerms(Expression.m_OutputPin))
 	{
 		ERROR("%s", "Too many terms for given output pin");
 		return false;
@@ -194,14 +199,14 @@ int Fuses::PinToIndex(uint32_t iPinNumber, bool bInverted, MacrocellMode Mode)
 }
 
 /*
-*		Fuses::MaxOutputPinTerms returns the maximum amount of terms an output OLMC can handle.
-*		if the function return value is -1 it means that the given pin number is not an valid output pin 
-*		thus the function can't return a valid term number.  
+*		Fuses::Output::MaximumTerms returns the maximum amount of terms an output OLMC can handle.
+*		if the function return value is -1 it means that the given pin number is not an valid output pin
+*		thus the function can't return a valid term number.
 */
 
-int Fuses::MaxOutputPinTerms(uint32_t iPinNumber)
+int Fuses::Output::MaximumTerms(uint32_t iPinNumber)
 {
-	switch(iPinNumber)
+	switch (iPinNumber)
 	{
 		case 14: return 8;
 		case 15: return 10;
@@ -217,11 +222,39 @@ int Fuses::MaxOutputPinTerms(uint32_t iPinNumber)
 	}
 }
 
-//		Fuses::IsValidOutputPin checks if a given pin is an output pin:
+//		Fuses::Output::IsValid checks if a given pin is an output pin:
 
-bool Fuses::IsValidOutputPin(uint32_t iPinNumber)
+bool Fuses::Output::IsValid(uint32_t iPinNumber)
 {
-	if (iPinNumber >= 14 && iPinNumber <= 23)
-		return true;
-	return false;
+	return iPinNumber >= 14 && iPinNumber <= 23 ? true : false;
 }
+
+/*
+*		Fuses::Output::ModeFuseIndices returns the mode control fuses for a given output pin.
+*		The return value is a boolean which indicates if the fuse pair was written to the given 
+*		std::pair reference. The function will only return false if the given pin number is
+*		an input pin who has no OLMC connected and therefore no control mode pin.
+*/
+
+bool Fuses::Output::ModeFuseIndices(uint32_t iPinNumber, pair<uint32_t, uint32_t>& FusesOut)
+{
+	if (!Fuses::Output::IsValid(iPinNumber))
+		return false;
+
+	switch(iPinNumber)
+	{
+		case 23: FusesOut = pair<uint32_t, uint32_t>(5808, 5809);
+		case 22: FusesOut = pair<uint32_t, uint32_t>(5810, 5811);
+		case 21: FusesOut = pair<uint32_t, uint32_t>(5812, 5813);
+		case 20: FusesOut = pair<uint32_t, uint32_t>(5814, 5815);
+		case 19: FusesOut = pair<uint32_t, uint32_t>(5816, 5817);
+		case 18: FusesOut = pair<uint32_t, uint32_t>(5818, 5819);
+		case 17: FusesOut = pair<uint32_t, uint32_t>(5820, 5821);
+		case 16: FusesOut = pair<uint32_t, uint32_t>(5822, 5823);
+		case 15: FusesOut = pair<uint32_t, uint32_t>(5824, 5825);
+		case 14: FusesOut = pair<uint32_t, uint32_t>(5826, 5827);
+	}
+
+	return true;
+}
+
