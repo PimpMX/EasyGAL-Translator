@@ -13,14 +13,10 @@ int main()
 {
 	TableData Data;
 
-	Data.m_InputPins = { 2, 4 };
+	Data.m_InputPins = { 2, 3 };
 	Data.m_OutputPin = 23;
 	Data.m_EnableFlipFlop = false;
-	Data.m_Table = { 0, 1, 1, 1 };
+	Data.m_Table = { 0, 0, 0, 1 };
 
-	DNF::Expression Expression;
-	LOG("%i", DNF::Build(Data, Expression));
-
-	vector<bool> Fuselist;
-	Fuses::Build(vector<DNF::Expression> {Expression}, Fuselist);
+	LOG("%i", Translator::Process(vector<TableData>{Data}, "out.jed"));
 }

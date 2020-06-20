@@ -22,7 +22,7 @@ void JEDEC::Serialize()
 	m_FileBuffer.append(1, '\n');
 
 	m_FileBuffer.append("*G0\n");
-	m_FileBuffer.append("*F0\n");
+	m_FileBuffer.append("*F0");
 
 	pair<uint32_t, pair<uint32_t, uint32_t>> FuseChecksum;
 	FuseChecksum.second.first = m_FileBuffer.size();
@@ -41,7 +41,7 @@ void JEDEC::Serialize()
 			if (Index) 
 				m_FileBuffer.append("\n");
 			
-			Buffer << std::setw(4) << std::setfill('0') << Index;
+			Buffer << std::setw(5) << std::setfill('0') << Index;
 			m_FileBuffer.append(string("*L") + Buffer.str() + " ");
 			Buffer = std::ostringstream();
 		}

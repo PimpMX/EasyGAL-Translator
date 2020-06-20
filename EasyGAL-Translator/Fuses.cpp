@@ -1,17 +1,5 @@
 #include "Fuses.h"
 
-void DumpVector(vector<bool> Fuses, uint32_t BlockSize)
-{
-	for(uint32_t Index = 0; Index < Fuses.size(); Index++)
-	{
-		if (Index % BlockSize == false)
-			printf("%s", "\n");
-
-		bool bTemporary = Fuses[Index];
-		printf("%i", bTemporary);
-	}
-}
-
 bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut)
 {
 	if (!Expressions.size())
@@ -41,19 +29,19 @@ bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut
 
 			for (uint32_t OLMC = 23; OLMC > Expressions[Index].m_OutputPin; OLMC--)
 				FuseIndex += (Fuses::Output::MaximumTerms(OLMC) + 1) * 44;
-
+			
 			return FuseIndex;
 		}();
 
 		vector<bool> ExpressionBuffer;
 
-		if (!Fuses::BuildFromExpression(Expressions[Index], Fuses::Output::MaximumTerms(Expressions[Index].m_OutputPin), 44, ExpressionBuffer)) 
+		if (!Fuses::BuildFromExpression(Expressions[Index], Fuses::Output::MaximumTerms(Expressions[Index].m_OutputPin) + 1, 44, ExpressionBuffer)) 
 		{
 			ERROR("%s", "Couldn't build all expression fuses");
 			return false;
 		}
 
-		//	Copy ExpressionBuffer into the correct target destination in the fusematrix.
+		//	Copy ExpressionBuffer into the correct target destination in the fuse matrix.
 
 		std::copy(ExpressionBuffer.begin(), ExpressionBuffer.end(), FuseListOut.begin() + ExpIndexStart);
 	}
@@ -62,7 +50,29 @@ bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut
 
 	std::fill(FuseListOut.begin() + 5764, FuseListOut.begin() + 5764 + 44, false);
 
-	DumpVector(FuseListOut, 32);
+	//	Set OLMC mode fuses.
+
+	for(DNF::Expression Expression : Expressions)
+	{
+		pair<uint32_t, uint32_t> ModeFuses;
+
+		if(!Fuses::Output::ModeFuseIndices(Expression.m_OutputPin, ModeFuses))
+		{
+			ERROR("%s", "Invalid PIN");
+			return false;
+		}
+
+		if(Expression.m_EnableFlipFlop)
+		{
+			FuseListOut[ModeFuses.first] = 1;
+			FuseListOut[ModeFuses.second] = 0;
+		}
+		else
+		{
+			FuseListOut[ModeFuses.first] = 1;
+			FuseListOut[ModeFuses.second] = 1;
+		}
+	}
 
 	return true;
 }
@@ -79,13 +89,13 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 		ERROR("%s", "Expression has invalid output pin");
 		return false;
 	}
-
+	
 	if (!Expression.m_Rows.size() || !iNumRows || !iRowLength)
 	{
 		ERROR("%s", "Invalid parameters");
 		return false;
 	}
-
+	
 	if (Expression.m_Rows.size() > Fuses::Output::MaximumTerms(Expression.m_OutputPin))
 	{
 		ERROR("%s", "Too many terms for given output pin");
@@ -97,9 +107,15 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 
 	FuseList.resize(iNumRows * iRowLength);
 
+	//	Enable Output.
+
+	std::fill(FuseList.begin(), FuseList.begin() + iRowLength, true);
+	
+	//	Start writing DNF terms.
+
 	for(uint32_t TermIndex = 0; TermIndex < Expression.m_Rows.size(); TermIndex++)
 	{
-		std::fill(FuseList.begin() + TermIndex * iRowLength, FuseList.begin() + TermIndex * iRowLength + iRowLength, true);
+		std::fill(FuseList.begin() + iRowLength + TermIndex * iRowLength, FuseList.begin() + iRowLength + TermIndex * iRowLength + iRowLength, true);
 
 		for(uint32_t PinIndex = 0; PinIndex < Expression.m_Rows[TermIndex].m_Pins.size(); PinIndex++)
 		{
@@ -110,13 +126,13 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 				Expression.m_EnableFlipFlop ? MacrocellMode::MODE_REGISTERED_HIGH : MacrocellMode::MODE_COMBINATORIAL_HIGH
 			);
 
-			if(!Index)
+			if(Index == -1)
 			{
 				ERROR("%s", "Couldn't resolve PIN index");
 				return false;
 			}
 
-			FuseList[TermIndex * iRowLength + Index] = false;
+			FuseList[iRowLength + TermIndex * iRowLength + Index] = false;
 		}
 	}
 
@@ -243,16 +259,16 @@ bool Fuses::Output::ModeFuseIndices(uint32_t iPinNumber, pair<uint32_t, uint32_t
 
 	switch(iPinNumber)
 	{
-		case 23: FusesOut = pair<uint32_t, uint32_t>(5808, 5809);
-		case 22: FusesOut = pair<uint32_t, uint32_t>(5810, 5811);
-		case 21: FusesOut = pair<uint32_t, uint32_t>(5812, 5813);
-		case 20: FusesOut = pair<uint32_t, uint32_t>(5814, 5815);
-		case 19: FusesOut = pair<uint32_t, uint32_t>(5816, 5817);
-		case 18: FusesOut = pair<uint32_t, uint32_t>(5818, 5819);
-		case 17: FusesOut = pair<uint32_t, uint32_t>(5820, 5821);
-		case 16: FusesOut = pair<uint32_t, uint32_t>(5822, 5823);
-		case 15: FusesOut = pair<uint32_t, uint32_t>(5824, 5825);
-		case 14: FusesOut = pair<uint32_t, uint32_t>(5826, 5827);
+		case 23: FusesOut = pair<uint32_t, uint32_t>(5808, 5809); break;
+		case 22: FusesOut = pair<uint32_t, uint32_t>(5810, 5811); break;
+		case 21: FusesOut = pair<uint32_t, uint32_t>(5812, 5813); break;
+		case 20: FusesOut = pair<uint32_t, uint32_t>(5814, 5815); break;
+		case 19: FusesOut = pair<uint32_t, uint32_t>(5816, 5817); break;
+		case 18: FusesOut = pair<uint32_t, uint32_t>(5818, 5819); break;
+		case 17: FusesOut = pair<uint32_t, uint32_t>(5820, 5821); break;
+		case 16: FusesOut = pair<uint32_t, uint32_t>(5822, 5823); break;
+		case 15: FusesOut = pair<uint32_t, uint32_t>(5824, 5825); break;
+		case 14: FusesOut = pair<uint32_t, uint32_t>(5826, 5827); break;
 	}
 
 	return true;
