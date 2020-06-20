@@ -89,14 +89,12 @@ bool Fuses::BuildFromExpression(DNF::Expression Expression, uint32_t iNumRows, u
 		ERROR("%s", "Expression has invalid output pin");
 		return false;
 	}
-	
-	if (!Expression.m_Rows.size() || !iNumRows || !iRowLength)
+	else if (!Expression.m_Rows.size() || !iNumRows || !iRowLength)
 	{
 		ERROR("%s", "Invalid parameters");
 		return false;
 	}
-	
-	if (Expression.m_Rows.size() > Fuses::Output::MaximumTerms(Expression.m_OutputPin))
+	else if (Expression.m_Rows.size() > Fuses::Output::MaximumTerms(Expression.m_OutputPin))
 	{
 		ERROR("%s", "Too many terms for given output pin");
 		return false;
