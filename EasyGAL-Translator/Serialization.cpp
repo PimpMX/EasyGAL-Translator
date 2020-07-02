@@ -24,9 +24,6 @@ void JEDEC::Serialize()
 	m_FileBuffer.append("*G0\n");
 	m_FileBuffer.append("*F0");
 
-	pair<uint32_t, pair<uint32_t, uint32_t>> FuseChecksum;
-	FuseChecksum.second.first = m_FileBuffer.size();
-
 	//	Start writing fusestates to file buffer.
 
 	for(uint32_t Index = 0; Index < m_FuseStates.size(); Index++)
@@ -49,34 +46,44 @@ void JEDEC::Serialize()
 		m_FileBuffer.append(1, m_FuseStates[Index] ? '1' : '0');
 	}
 
-	FuseChecksum.second.second = m_FileBuffer.size();
+	//	Calculate fuselist checksum.
 
-	//	Calculate checksum for fuselist.
+	uint32_t iFuseChecksum = 0;
 
-	for (uint32_t Index = FuseChecksum.second.first; Index < FuseChecksum.second.second; Index++)
-		FuseChecksum.first += m_FileBuffer.at(Index);
+	for(uint32_t FuseIndex = 0; FuseIndex < m_FuseStates.size(); FuseIndex += 8)
+	{
+		bitset<8> FuseBuffer;
+
+		for(uint32_t WordIndex = 0; WordIndex < 8; WordIndex++)
+		{
+			if (FuseIndex + WordIndex > m_FuseStates.size() - 1)
+				continue;
+
+			FuseBuffer.set(WordIndex, m_FuseStates[FuseIndex + WordIndex]);
+		}
+
+		iFuseChecksum += FuseBuffer.to_ulong();
+	}
 
 	//	Write fuselist checksum to file buffer.
 
-	Buffer << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << FuseChecksum.first;
+	Buffer << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << iFuseChecksum;
 	m_FileBuffer.append(string("\n*C") + Buffer.str());
 	Buffer = std::ostringstream();
 
 	m_FileBuffer.append("\n");
 	m_FileBuffer.append(1, ASCII_CTRL_ETX);
 
-	pair<uint32_t, pair<uint32_t, uint32_t>> FileChecksum;
-	FileChecksum.second.first = 0;
-	FileChecksum.second.second = m_FileBuffer.size();
+	uint32_t iFileChecksum = 0;
 
 	//	Calculate checksum for complete file buffer.
 
-	for (uint32_t Index = FileChecksum.second.first; Index < FileChecksum.second.second; Index++)
-		FileChecksum.first += m_FileBuffer.at(Index);
+	for (uint32_t Index = 0; Index < m_FileBuffer.size(); Index++)
+		iFileChecksum += m_FileBuffer.at(Index);
 
 	//	Write file buffer checksum.
 
-	Buffer << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << FileChecksum.first;
+	Buffer << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << iFileChecksum;
 	m_FileBuffer.append(Buffer.str());
 	Buffer = std::ostringstream();
 

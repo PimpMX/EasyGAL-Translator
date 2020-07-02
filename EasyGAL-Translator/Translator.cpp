@@ -26,6 +26,12 @@ bool Translator::Process(vector<TableData> TruthTables, std::string Filename)
 	
 	try
 	{
+		Fuses[5830] = 1;
+		Fuses[5831] = 1;
+		Fuses[5838] = 1;
+		Fuses[5839] = 1;
+		Fuses[5846] = 1;
+
 		JEDEC(24, 5892, Fuses, Filename).Serialize();
 	}
 	catch(std::exception Error)

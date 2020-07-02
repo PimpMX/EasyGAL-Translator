@@ -50,7 +50,7 @@ bool Fuses::Build(vector<DNF::Expression> Expressions, vector<bool>& FuseListOut
 
 	std::fill(FuseListOut.begin() + 5764, FuseListOut.begin() + 5764 + 44, false);
 
-	//	Set OLMC mode fuses.
+	//	Set S0 & S1 fuses.
 
 	for(DNF::Expression Expression : Expressions)
 	{

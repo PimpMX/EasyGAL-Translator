@@ -12,8 +12,7 @@ using namespace std;
 int main() 
 {
 	TableData Data;
-
-	Data.m_InputPins = { 2, 3 };
+	Data.m_InputPins = { 1, 2 };
 	Data.m_OutputPin = 23;
 	Data.m_EnableFlipFlop = false;
 	Data.m_Table = { 0, 0, 0, 1 };

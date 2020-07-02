@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <bitset>
 
 //	Version string for JEDEC file
 
