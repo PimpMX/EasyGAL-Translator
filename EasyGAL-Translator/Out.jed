@@ -1,19 +1,9 @@
 
-CUPL(WM)        5.0a  Serial# 60008009
-Device          g22v10  Library DLIB-h-40-1
-Created         Thu Jul 02 20:34:09 2020
-Name            TestProj 
-Partno          00 
-Revision        01 
-Date            02.07.2020 
-Designer        Engineer 
-Company         ZGK-Konstanz 
-Assembly        None 
-Location        
-*QP24 
-*QF5892 
-*G0 
-*F0 
+Created by EasyGal-Translator v1.0
+*QP24
+*QF5892
+*G0
+*F0
 *L00032 00000000000011111111111111111111
 *L00064 11111111111111111111111101110111
 *L00096 11111111111111111111111111111111
@@ -21,4 +11,4 @@ Location
 *L05792 00000000000000001100000000000000
 *L05824 00000011000000110000001000000000
 *C0CA7
-*807F
+3FB3
