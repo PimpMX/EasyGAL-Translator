@@ -56,5 +56,8 @@
     <ClInclude Include="Fuses.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Configs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

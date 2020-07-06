@@ -27,6 +27,7 @@
     <ClCompile Include="Translator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Configs.h" />
     <ClInclude Include="DNF.hpp" />
     <ClInclude Include="Fuses.h" />
     <ClInclude Include="Helper.hpp" />
