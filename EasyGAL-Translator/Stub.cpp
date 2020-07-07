@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "Fuses.h"
+#include "Configs.h"
 
 int main() 
 {
@@ -16,6 +17,9 @@ int main()
 	Data.m_OutputPin = 23;
 	Data.m_EnableFlipFlop = false;
 	Data.m_Table = { 0, 0, 0, 1 };
+	
+	LOG("%i", Translator::Process(vector<TableData>{Data}, "g22v10", "out.jed"));
 
-	LOG("%i", Translator::Process(vector<TableData>{Data}, "out.jed"));
+	Configs::CircuitConfig Config;
+	Configs::Load("g22v10", &Config);
 }

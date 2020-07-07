@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Headerdateien\Dependencies">
+      <UniqueIdentifier>{55c5489a-86cf-4155-9e5e-2a89e39965b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DNF.cpp">
@@ -31,6 +34,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Fuses.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Configs.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,6 +61,12 @@
     </ClInclude>
     <ClInclude Include="Fuses.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Configs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\json.hpp">
+      <Filter>Headerdateien\Dependencies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
