@@ -29,7 +29,7 @@ using namespace nlohmann;
 namespace Configs
 {
 	/*
-	*	The CircuitConfig datastructure stores every important 
+	*	The CircuitConfig datastructure stores every important attribute of an programmable logic device.
 	*
 	*	CircuitConfig::m_Outputs contains pairs of two unsigned integers.
 	*	- The first value of a pair contains the designated output pin.
