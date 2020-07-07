@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "Fuses.h"
+#include "Configs.h"
 
 int main() 
 {
@@ -17,5 +18,5 @@ int main()
 	Data.m_EnableFlipFlop = false;
 	Data.m_Table = { 0, 0, 0, 1 };
 
-	LOG("%i", Translator::Process(vector<TableData>{Data}, "out.jed"));
+	LOG("%i", Translator::Process(vector<TableData>{Data}, "out", "out.jed"));
 }

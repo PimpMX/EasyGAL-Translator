@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Configs.cpp" />
     <ClCompile Include="DNF.cpp" />
     <ClCompile Include="Fuses.cpp" />
     <ClCompile Include="Helper.cpp" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configs.h" />
+    <ClInclude Include="Dependencies\json.hpp" />
     <ClInclude Include="DNF.hpp" />
     <ClInclude Include="Fuses.h" />
     <ClInclude Include="Helper.hpp" />
