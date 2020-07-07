@@ -26,7 +26,7 @@ bool Translator::Process(vector<TableData> TruthTables, std::string DeviceType, 
 
 	std::vector<bool> Fuses;
 
-	if(!Fuses::Build(Expressions, Fuses))
+	if(!Fuses::Build(Expressions, Fuses, &Config))
 	{
 		ERROR("%s", "couldn't generate all fuses for given expressions");
 		return false;

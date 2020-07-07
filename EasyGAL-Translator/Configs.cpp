@@ -56,7 +56,7 @@ bool Configs::Load(const char* szConfigName, CircuitConfig* pConfigOut)
 		return false;
 	}
 
-	//	Get number of input pins.
+	//	Get input pins.
 
 	if(CurConfig.find("InputPins") != CurConfig.end())
 	{
@@ -69,6 +69,8 @@ bool Configs::Load(const char* szConfigName, CircuitConfig* pConfigOut)
 		return false;
 	}
 
+	//	Get output pins and their maximum DNF term count
+
 	if(CurConfig.find("OutputPins") != CurConfig.end())
 	{
 		for(uint32_t Index = 0; Index < CurConfig["OutputPins"].size(); Index++)
@@ -77,6 +79,19 @@ bool Configs::Load(const char* szConfigName, CircuitConfig* pConfigOut)
 	else
 	{
 		ERROR("%s", "OutputPins Key doesn't exist in Config");
+		return false;
+	}
+
+	//	Get special pins
+
+	if(CurConfig.find("SpecialPins") != CurConfig.end())
+	{
+		for (uint32_t Index = 0; Index < CurConfig["SpecialPins"].size(); Index++)
+			pConfigOut->m_SpecialPins.push_back(CurConfig["SpecialPins"].at(Index));
+	}
+	else
+	{
+		ERROR("%s", "SpecialPins Key doesn't exist in Config");
 		return false;
 	}
 

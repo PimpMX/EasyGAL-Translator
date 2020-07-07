@@ -19,7 +19,7 @@
 
 #include "Helper.hpp"
 
-//	All credit goes to nlohmann and his json serializer: https://github.com/nlohmann/json
+//	JSON serializer: https://github.com/nlohmann/json
 
 #include "Dependencies/json.hpp"
 
@@ -34,6 +34,11 @@ namespace Configs
 	*	CircuitConfig::m_Outputs contains pairs of two unsigned integers.
 	*	- The first value of a pair contains the designated output pin.
 	*	- The second value of a pair contains the maximum output terms for the specified output pin.
+	*
+	*	The m_SpecialPins attribute is reserved for input pins which don't oblige the standard translation rules. 
+	*	It contains a pair of two unsigned integers
+	*	- The first value is the input pin number which is special.
+	*	- The second value is the row index which should be used for this pin uninverted.
 	*/
 
 	struct CircuitConfig 
@@ -42,6 +47,7 @@ namespace Configs
 		uint32_t m_iNumPins = 0;
 		vector<uint32_t> m_Inputs = {};
 		vector<pair<uint32_t, uint32_t>> m_Outputs = {};
+		vector<pair<uint32_t, uint32_t>> m_SpecialPins = {};
 	};
 
 	bool Load(const char* szConfigName, CircuitConfig* pConfigOut);
